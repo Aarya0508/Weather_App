@@ -53,7 +53,8 @@ def logoutuser(request):
 @login_required
 def mainpage(request):
     flag = False
-    url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=2a5035a1a9287c44491f251ad0719454'
+    url = 'http://api.openweathermap.org/data/2.5/forecast?q={}&units=metric&appid=32fb097195771ce3c9519e1585425b5d'
+    url1 = 'https://api.waqi.info/feed/{}/?token=2c0b9cda3dbe66e6f03f19ffc7c066eacad3dc54'
     cities = City.objects.all()
     weather_data = []
     ex_weather_data = []
@@ -85,27 +86,32 @@ def mainpage(request):
         for city in cities:
             if city in request.user.city.all():
                 city_weather = requests.get(url.format(city)).json()
+                city_aqi = requests.get(url1.format(city)).json()
                 weather = {
-                    'city': str(city).capitalize(),
-                    'temperature': city_weather['main']['temp'],
-                    'description': city_weather['weather'][0]['description'],
-                    'icon': city_weather['weather'][0]['icon']
+                    "city":city_weather["city"]["name"],
+                    "city_country":city_weather["city"]["country"],
+                    "feel_like": city_weather["list"][1]["main"]["feels_like"],
+                    "temperature": round(city_weather["list"][1]["main"]["temp"] ),
+                    "max_temp": round(city_weather["list"][1]["main"]["temp_max"]),
+                    "min_temp": round(city_weather["list"][1]["main"]["temp_min"]),
+                    "pressure":city_weather["list"][1]["main"]["pressure"],
+                    "humidity":city_weather["list"][1]["main"]["humidity"],
+                    "description":city_weather["list"][1]["weather"][0]["description"],
+                    "icon":city_weather["list"][1]["weather"][0]["icon"],
+                    'date':city_weather['list'][1]["dt_txt"],
+                    "wind":city_weather['list'][1]['wind']['speed'],
+                    'latitude':city_weather["city"]["coord"]["lat"],
+                    'longitude':city_weather["city"]["coord"]["lon"],
+                    'aqi':city_aqi['data']['aqi'],
+                    'Precipitation':city_weather['list'][1]['pop']*100,
+                    'wind_direction':city_weather['list'][1]['wind']['deg'],
+                    'visibility': city_weather['list'][1]['visibility'],
+                    
                 }
                 weather_data.append(weather)
-                ex_weather = {
-                    'city': str(city).capitalize(),
-                    'temperature': city_weather['main']['temp'],
-                    'feels_like': city_weather['main']['feels_like'],
-                    'pressure': city_weather['main']['pressure'],
-                    'humidity': city_weather['main']['humidity'],
-                    'description': city_weather['weather'][0]['description'],
-                    'icon': city_weather['weather'][0]['icon'],
-                    'wind_speed': city_weather['wind']['speed']
-                }
-                ex_weather_data.append(ex_weather)
+                
     context = {
         'weather_data': weather_data,
-        'ex_weather_data': ex_weather_data,
         'form': form,
         'messages': message,
     }

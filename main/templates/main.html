@@ -57,38 +57,6 @@
     <div class="container">
         <div class="columns">
             <div class="column is-offset-4 is-4">
-                {% if extended %}
-                {% for weather in ex_weather_data %}
-                <div class="box">
-                    <article class="media">
-                        <div class="media-left">
-                            <figure class="image is-50x50">
-                                <img src="http://openweathermap.org/img/w/{{ weather.icon }}.png" alt="Image">
-                            </figure>
-                        </div>
-                        <div class="media-content">
-                            <div class="content">
-                                <p>
-                                    <span class="title">{{ weather.city }}</span>
-                                    <br>
-                                    <span class="subtitle">{{ weather.temperature }}°C, feels like {{ weather.feels_like }}°C</span>
-                                    <br> {{ weather.description }}
-                                    <br> Air pressure: {{ weather.pressure }} hPa
-                                    <br> Humidity: {{ weather.humidity }}%
-                                    <br> Wind speed: {{ weather.wind_speed }} m/s
-                                </p>
-                            </div>
-                        </div>
-                        <div class="delete">
-                            <a href="{% url 'delete' weather.city %}">
-                                <button class="delete">
-                                </button>
-                            </a>
-                        </div>
-                    </article>
-                </div>
-                {% endfor %}
-                {% else %}
                 {% for weather in weather_data %}
                 <div class="box">
                     <article class="media">
@@ -100,10 +68,55 @@
                         <div class="media-content">
                             <div class="content">
                                 <p>
-                                    <span class="title">{{ weather.city }}</span>
+                                    <span class="title">{{ weather.city }},{{weather.city_country}}</span>
                                     <br>
-                                    <span class="subtitle">{{ weather.temperature }}°C</span>
-                                    <br> {{ weather.description }}
+                                    <span class="subtitle">Date: {{weather.date}}</span>
+                                    <br>Temperature :{{ weather.temperature }}°C 
+                                    <br>Maximum Temperature :{{weather.max_temp}}°C
+                                    <br>Minimum Temperature :{{weather.min_temp}}°C
+                                    <br> Weather Description : {{ weather.description }}
+                                    <br> Air pressure: {{ weather.pressure }} hPa
+                                    <br> Humidity: {{ weather.humidity }}%
+                                    <br> Precipitation: {{weather.Precipitation}}%
+                                    <br> Visibility: {{weather.visibility}} m.
+                                    <br> Wind speed: {{ weather.wind }} m/s 
+                                    <br> Wind degree : {{weather.wind_direction}}
+                                    <h5><b>AQI : {{weather.aqi}}</b></h5>
+                                    {% if weather.aqi < 51 %}
+                                     <b>Air pollution Level:</b> Good
+                                    <br><b>Health Implications:</b> Air quality is considered satisfactory, and air pollution poses little or no risk.
+                                    {% elif weather.aqi < 101 %}
+                                    <b>Air pollution Level:</b> Moderate
+                                    <br><b>Health Implications:</b> Air quality is acceptable; however, for some pollutants there may be a 
+                                     moderate health concern for a very small number of people who are unusually sensitive to air pollution.
+                                    {% elif weather.aqi < 151 %}
+                                    <b>Air pollution Level:</b> Unhealthy for Sensitive Groups
+                                    <br><b>Health Implications:</b> Members of sensitive groups may experience health effects. The general public is not likely to be affected.
+                                    {% elif weather.aqi < 201 %}
+                                    <b>Air pollution Level:</b> Unhealthy
+                                    <br><b>Health Implications:</b> Everyone may begin to experience health effects; members of sensitive groups may experience more serious health effects.  
+                                    {% elif weather.aqi < 301 %}
+                                    <b>Air pollution Level:</b> Very Unhealthy
+                                    <br><b>Health Implications:</b> Health warnings of emergency conditions. The entire population is more likely to be affected.
+                                    {% else %}
+                                    <b>Air pollution Level:</b> Hazardous
+                                    <br><b>Health Implications:</b> Health alert: everyone may experience more serious health effects
+                                    {% endif %} 
+                                    <h3><b>Advice</b></h3>
+                                    {% if weather.temperature < 11 %}
+                                      Wear Fur clothes and gloves/mittens.
+                                    {% elif weather.temperature < 16 %}
+                                      Wear Woolen clothes and gloves/mittens.
+                                    {% elif weather.temperature < 21 %}
+                                      Wear Light woolen, Leather or Waterproof fabrics clothes. 
+                                    {% elif weather.temperature < 26 %}
+                                      Wear Cotton, Jersey or Denim clothes.  
+                                    {% elif weather.temperature < 31 %}
+                                      Wear Cotton and other Light fabrics clothes, with short sleeves.
+                                    {% else %}
+                                      Wear Light fabrics and baggy volumes clothes to stay fresh, wear a hat and apply sunscreen to prevent sunburn.
+                                    {% endif %} 
+                                    
                                 </p>
                             </div>
                         </div>
@@ -114,9 +127,8 @@
                             </a>
                         </div>
                     </article>
-                </div>
-                {% endfor %}
-				{% endif %}
+                 </div>
+                 {% endfor %}
 			{% endif %}
             </div>
         </div>
